@@ -243,3 +243,11 @@ textarea:focus
 	height: 35px;
 	float: left;
 }
+.group_info img {
+    height: 250px;
+    width: 100%;
+}
+.group_info #loading {
+    height: 5%;
+    width: 5%;
+}

@@ -1,6 +1,6 @@
+
 <?php 
             require 'assets/classes.php';
-           
             session_start();
             if(!isset($_SESSION['user']))header("location: hello/");
             $connect =new connection ;
@@ -8,7 +8,7 @@
             $userloggedin= $_SESSION['user']->get_id(); 
             $userloggedin_query=mysqli_query($con, "SELECT * FROM users WHERE id='$userloggedin' ");
              $user= mysqli_fetch_array($userloggedin_query);
-           
+        
             echo '
                  <!DOCTYPE html>
                     <html>
@@ -51,101 +51,41 @@
                             </head>
                         <body>'
 ?>
-<?php 
-    if (isset($_POST['post'])) 
-    {
-        //echo "Hello from post";
-        //die();
-        $post= new Post($con,$userloggedin);
-        //it takes body and user to fro now we make it none just in the start 
-        $post->submitpost($_POST['post_text'],'none');
-        header("Location:index.php");
-    }
-    //create group	
-    if (isset($_POST['create_group'])) 
-    {
-            $error_array=array();
-            $group_name=strip_tags($_POST['group_name']);//remove any html tags 
-            $group_name=str_replace(' ','',$group_name);//replace any spce in the name with no space
-            $group_name=ucfirst(strtolower($group_name));//only the first letter will be uppercase
-            $_SESSION['group_name']=$group_name; //store the value
-                        //check if the group name already exists
-            $e_value="SELECT group_name FROM groups WHERE group_name='$group_name'";
-            if($e_check=mysqli_query($con,$e_value))
-            {
-            //count the no of the same grooup name
-            $num_rows= mysqli_num_rows($e_check);
-            if($num_rows>0)
-            {
-            array_push($error_array," This group name already exists <br>");
-            }
-            }
-            if (empty($error_array))
-            {
-            $sql = "INSERT INTO groups VALUES('','$group_name','','$userloggedin',',')";
-            $query=mysqli_query($con,$sql);
-            header("Location: group.php");
-            }
-    }
-?>
- 
-<!-- home -->
-            <!--<div style="width:60%; margin: 20px 20%;  border: #96979e 1px solid; display:inline-block; border-radius: 5px;">-->
+    <?php
+       // $sql="SELECT * FROM groups WHERE admin='$userloggedi"
+    
+       /* if (isset($_POST['post_group'])) 
+        {
+            $post= new Post($con,$userloggedin);
+            //it takes body and user to fro now we make it none just in the start 
+            $post->submitpost($_POST['post_text'],$group_name);
+            header("Location:group.php");
+        }*/
+
+
+
+
+    ?>
+
+<div class="group_info">
+    <img src="assets/img/group image.jpg" alt="cover photo">
     <div class="wrapper">
-        <div class="user_details column">
-            <a href="profile.php"><img src="<?php echo $userloggedin."/".$user['profile_pic'];?>" >
-            </a>
-            <div class="user_details_left_right">
-                <a href="<?php echo $userloggedin; ?>">	
-                    <?php
-                        echo $user['f_name']." ".$user['l_name'] ."<br>"; 
-                        ?>
-                </a>
+            
+            
+            <div class="main_column column">
+                <div id="postDiv" style="margin-bottom: 60px;">
+                    <form action="group.php" class="post_form" style="width: 80%;height: 60px;border-radius: 5px;margin-right: 5px;border:1px solid rgb(224, 219, 219);font-size: 13px;" method="POST">
+                        <textarea name="post_text" id ="post_text" placeholder="Post Something?"></textarea>
+                        <br>
+                        <input type="submit" name="post_group" id="post_button" value="post">
+                        <hr>
+                    </form>          
+                </div>
+                <div class="posts_area"> </div>
+                <img id="loading" src="assets/img/loading.gif">
             </div>
-        </div>
-        <div class="main_column column">
-            <div id="postDiv" style="margin-bottom: 60px;">
-                <form action="index.php" class="post_form" style="width: 80%;height: 60px;border-radius: 5px;margin-right: 5px;border:1px solid rgb(224, 219, 219);font-size: 13px;" method="POST">
-                    <textarea name="post_text" id ="post_text" placeholder="what's in your mind?"></textarea>
-                    <br>
-                    <input type="submit" name="post" id="post_button" value="post">
-                    <hr>
-                </form>          
-            </div>
-            <div class="posts_area"> </div>
-		    <img id="loading" src="assets/img/loading.gif">
 
-        </div>
-	<div class="user_details column">
-        <!--group part-->
-        <form method="POST">
-            <input type="text" name="group_name" placeholder="group name" required>
-            <input type="submit" name="create_group" value="create group!" method="POST"> 
-        </from>
-        <hr>
-        <h4>Popular</h4>
-
-        <div class="trends">
-            <?php 
-            $query = mysqli_query($con, "SELECT * FROM trends ORDER BY hits DESC LIMIT 9");
-
-            foreach ($query as $row) {
-                
-                $word = $row['title'];
-                $word_dot = strlen($word) >= 14 ? "..." : "";
-
-                $trimmed_word = str_split($word, 14);
-                $trimmed_word = $trimmed_word[0];
-
-                echo "<div style'padding: 1px'>";
-                echo $trimmed_word . $word_dot;
-                echo "<br></div><br>";
-            }
-            ?>
-        </div>
-    </div>
-
-	<script>
+            <script>/*
 		var userloggedin ='<?php echo $userloggedin; ?>';
 
 		$(document).ready(function(){
@@ -153,7 +93,7 @@
 			$('#loading').show();
 			// ajax for loading posts 
 			$.ajax({
-				url:"assets/operation/ajax.php",
+				url:"assets/operation/ajax_group.php",
 				type:"POST",
 				data:"page=1&userloggedin=" + userloggedin,
 				cache:false,
@@ -203,33 +143,15 @@
 
 
 		});
-
+*/
 	</script>
 
-
-
-
-
-<!--</div>-->
-                                                
-           
+    </div>
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-<div>
-
-    </body>  
+</div>
+ </body>
 </html>
-            
