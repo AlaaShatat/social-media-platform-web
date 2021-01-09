@@ -1,14 +1,24 @@
 
 <?php 
             require 'assets/classes.php';
-            session_start();
-            if(!isset($_SESSION['user']))header("location: hello/");
+            //session_start();
+            
+            //if(!isset($_SESSION['user']))header("location: hello/");
             $connect =new connection ;
             $con = $connect->conn;   
             $userloggedin= $_SESSION['user']->get_id(); 
             $userloggedin_query=mysqli_query($con, "SELECT * FROM users WHERE id='$userloggedin' ");
              $user= mysqli_fetch_array($userloggedin_query);
-        
+             if(isset($_GET['group_id']))
+              {
+                $group_id = $_GET['group_id'];
+                $user_details_query = mysqli_query($con, "SELECT * FROM groups WHERE id='$group_id'");
+                $group_array=mysqli_fetch_array($user_details_query);
+              if(mysqli_num_rows($user_details_query) == 0) {
+                echo "group does not exist";
+                exit();
+              }
+            }
             echo '
                  <!DOCTYPE html>
                     <html>
@@ -52,16 +62,13 @@
                         <body>'
 ?>
     <?php
-       // $sql="SELECT * FROM groups WHERE admin='$userloggedi"
-    
-       /* if (isset($_POST['post_group'])) 
-        {
-            $post= new Post($con,$userloggedin);
-            //it takes body and user to fro now we make it none just in the start 
-            $post->submitpost($_POST['post_text'],$group_name);
-            header("Location:group.php");
-        }*/
-
+       if (isset($_POST['post_group'])) 
+       {
+         //  $post= new Post($con,$userloggedin);
+           //it takes body and user to fro now we make it none just in the start 
+          // $post->submitpost($_POST['post_text'],$group_id);
+           header("Location:group.php");
+       }
 
 
 
@@ -70,83 +77,103 @@
 <div class="group_info">
     <img src="assets/img/group image.jpg" alt="cover photo">
     <div class="wrapper">
-            
+        
             
             <div class="main_column column">
+                <input type="submit" class="deep_blue" data-toggle="modal" data-target="#post_form" value="Post Something">
                 <div id="postDiv" style="margin-bottom: 60px;">
-                    <form action="group.php" class="post_form" style="width: 80%;height: 60px;border-radius: 5px;margin-right: 5px;border:1px solid rgb(224, 219, 219);font-size: 13px;" method="POST">
-                        <textarea name="post_text" id ="post_text" placeholder="Post Something?"></textarea>
-                        <br>
-                        <input type="submit" name="post_group" id="post_button" value="post">
-                        <hr>
-                    </form>          
-                </div>
                 <div class="posts_area"> </div>
-                <img id="loading" src="assets/img/loading.gif">
+		        <img id="loading" src="assets/img/loading.gif"> 
+                <div>       
+                    <script>/*
+                        var userloggedin ='<?php echo $userloggedin; ?>';
+
+                        $(document).ready(function(){
+
+                            $('#loading').show();
+                            // ajax for loading posts 
+                            $.ajax({
+                                url:"assets/operation/ajax_submit_group_post.php",
+                                type:"POST",
+                                data:"page=1&userloggedin=" + userloggedin,
+                                cache:false,
+
+                                success:function(data)
+                                {
+                                    $('#loading').hide(); //dont show loading sign again 
+                                    $('.posts_area').html(data);
+                                }
+                            });  //end of ajax
+                        $(window).scroll(function(){
+                        var height=$('.posts_area').height(); //div containing posts
+                        var scroll_top=$(this).scrollTop();
+                        var page=$('.posts_area').find('.nextpage').val();//   created int post class
+                        var nomoreposts=$('.posts_area').find('.nomoreposts').val();
+                        //alert("hello");
+
+                        // function to scroll to the bottom //rl moshkla msh radi yd5ol  el if aslnn
+                        if((document.body.scrollHeight == document.body.scrollTop + window.innerHeight) && nomoreposts=='false')
+                        {
+                            
+                            $('#loading').show();
+                            alert("hello");
+                            var ajaxReq = $.ajax({
+                            url:"assets/operation/ajax_submit_group_post.php",
+                            type:"POST",
+                            data:"page=" + page + "&userloggedin=" + userloggedin,
+                            cache:false,
+
+                                success:function(response)
+                                {
+                                    $('.posts_area').find('.nextpage').remove();
+                                    $('.posts_area').find('.nomoreposts').remove();
+
+                                    $('#loading').hide();
+                                    $('.posts_area').append(response);//add new posts to the existing posts
+                                }
+                            });  
+
+                        }//end if
+
+                        return false;
+
+
+                        });//end $(window).scroll(function(){*/
+
+
+
+                        });*/
+
+                    </script>
+
+                 <!-- Modal -->
+                <div class="modal fade" id="post_form" tabindex="-1" role="dialog" aria-labelledby="postModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="postModalLabel">Post something</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>This will appear on this group. </p>
+
+                            <form class="group_post" action="profile.php" method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                <textarea class="form-control" name="post_body"></textarea>
+                                <input type="hidden" name="user_from" value="<?php echo $userloggedin; ?>">
+                                <input type="hidden" name="user_to" value="<?php echo $group_id; ?>">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" name="post_button" id="submit_group_post">Post</button>
+                        </div>
+  
             </div>
-
-            <script>/*
-		var userloggedin ='<?php echo $userloggedin; ?>';
-
-		$(document).ready(function(){
-
-			$('#loading').show();
-			// ajax for loading posts 
-			$.ajax({
-				url:"assets/operation/ajax_group.php",
-				type:"POST",
-				data:"page=1&userloggedin=" + userloggedin,
-				cache:false,
-
-				success:function(data)
-				{
-					$('#loading').hide(); //dont show loading sign again 
-					$('.posts_area').html(data);
-				}
-			});  //end of ajax
-		$(window).scroll(function(){
-		var height=$('.posts_area').height(); //div containing posts
-		var scroll_top=$(this).scrollTop();
-		var page=$('.posts_area').find('.nextpage').val();//   created int post class
-		var nomoreposts=$('.posts_area').find('.nomoreposts').val();
-		//alert("hello");
-
-		// function to scroll to the bottom //rl moshkla msh radi yd5ol  el if aslnn
-		if((document.body.scrollHeight == document.body.scrollTop + window.innerHeight) && nomoreposts=='false')
-		{
-			
-			$('#loading').show();
-			alert("hello");
-			var ajaxReq = $.ajax({
-			url:"assets/operation/ajax.php",
-			type:"POST",
-			data:"page=" + page + "&userloggedin=" + userloggedin,
-			cache:false,
-
-				success:function(response)
-				{
-					$('.posts_area').find('.nextpage').remove();
-					$('.posts_area').find('.nomoreposts').remove();
-
-					$('#loading').hide();
-					$('.posts_area').append(response);//add new posts to the existing posts
-				}
-			});  
-
-		}//end if
-
-		return false;
-
-
-		});//end $(window).scroll(function(){*/
-
-
-
-		});
-*/
-	</script>
-
-    </div>
+     </div>
 
 
 

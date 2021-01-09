@@ -67,26 +67,18 @@
             $error_array=array();
             $group_name=strip_tags($_POST['group_name']);//remove any html tags 
             $group_name=str_replace(' ','',$group_name);//replace any spce in the name with no space
-            $group_name=ucfirst(strtolower($group_name));//only the first letter will be uppercase
-            $_SESSION['group_name']=$group_name; //store the value
-                        //check if the group name already exists
-            $e_value="SELECT group_name FROM groups WHERE group_name='$group_name'";
-            if($e_check=mysqli_query($con,$e_value))
-            {
-            //count the no of the same grooup name
-            $num_rows= mysqli_num_rows($e_check);
-            if($num_rows>0)
-            {
-            array_push($error_array," This group name already exists <br>");
-            }
-            }
-            if (empty($error_array))
-            {
+            $group_name=ucfirst(strtolower($group_name));//only the first letter will be uppercase    
+               
+            
             $sql = "INSERT INTO groups VALUES('','$group_name','','$userloggedin',',')";
             $query=mysqli_query($con,$sql);
-            header("Location: group.php");
-            }
-    }
+           // $get_group=mysqli_query($con,"SELECT*FROM groups WHERE group_name='$group_name'");
+            //$row=mysqli_fetch_array($get_group);
+            //$id=$row['id'];
+            //header("Location: group.php?$id");
+            header("Location:index.php");
+        }
+    
 ?>
  
 <!-- home -->
@@ -120,7 +112,7 @@
         <!--group part-->
         <form method="POST">
             <input type="text" name="group_name" placeholder="group name" required>
-            <input type="submit" name="create_group" value="create group!" method="POST"> 
+            <input type="submit" href="" name="create_group" value="create group!" method="POST"> 
         </from>
         <hr>
         <h4>Popular</h4>
